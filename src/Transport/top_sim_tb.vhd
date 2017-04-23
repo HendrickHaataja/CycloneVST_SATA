@@ -76,54 +76,54 @@ begin
 		wait for 8 ns;
 		rst_n <= '0'; wait for 10 ns;
 		rst_n <= '1'; wait until rising_edge(clk);
-		status_from_link_tb <= "10111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "10101101"; wait until rising_edge(clk);
 		data_from_link_tb <= x"000000" & REG_DEVICE_TO_HOST; wait until rising_edge(clk);
 		for i in 0 to 3 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "00111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00101101"; wait until rising_edge(clk);
 		wait until data_to_link_tb = x"00EC8027";
 		for i in 0 to 5 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "10111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "10101101"; wait until rising_edge(clk);
 		data_from_link_tb <= x"000000" & PIO_SETUP_FIS; wait until rising_edge(clk);
 		for i in 0 to 5 loop wait until rising_edge(clk); end loop;
 		data_from_link_tb <= x"000000" & DATA_FIS; wait until rising_edge(clk);
 		for i in 0 to 5 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "00111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00101101"; wait until rising_edge(clk);
 		wait until data_to_link_tb = x"00358027";
 
 		for i in 0 to 11 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "10111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "10101101"; wait until rising_edge(clk);
 		data_from_link_tb <= x"00000039"; wait until rising_edge(clk);
 		data_from_link_tb <= x"FFFFFFFF"; wait until rising_edge(clk);
-		status_from_link_tb <= "00111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00101101"; wait until rising_edge(clk);
 		for i in 0 to 3 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "01111111"; wait until rising_edge(clk);--pause
+		status_from_link_tb <= "01101101"; wait until rising_edge(clk);--pause
 		--wait until rising_edge(clk);
-		status_from_link_tb <= "00111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00101101"; wait until rising_edge(clk);
 
 		wait until trans_tx_to_link_ready = '0'; wait until rising_edge(clk);
-		status_from_link_tb <= "00011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00001101"; wait until rising_edge(clk);
 
 		for i in 0 to 21 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "10011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "10001101"; wait until rising_edge(clk);
 		data_from_link_tb <= x"00000034"; wait until rising_edge(clk);
 		for i in 0 to 3 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "00011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00001101"; wait until rising_edge(clk);
 		wait until trans_tx_to_link_ready = '1'; wait until rising_edge(clk);
-		status_from_link_tb <= "00111111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00101101"; wait until rising_edge(clk);
 		wait until trans_tx_to_link_ready = '0'; wait until rising_edge(clk);
 
 		for i in 0 to 23 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "10011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "10001101"; wait until rising_edge(clk);
 		data_from_link_tb <= x"00000046"; wait until rising_edge(clk);
 		for i in 0 to BUFFER_DEPTH - 1 loop
 			data_from_link_tb <= std_logic_vector(to_unsigned(i,32)); wait until rising_edge(clk);
 		end loop;
-		status_from_link_tb <= "00011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00001101"; wait until rising_edge(clk);
 		for i in 0 to 21 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "10011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "10001101"; wait until rising_edge(clk);
 		data_from_link_tb <= x"00000034"; wait until rising_edge(clk);
 		for i in 0 to 3 loop wait until rising_edge(clk); end loop;
-		status_from_link_tb <= "00011111"; wait until rising_edge(clk);
+		status_from_link_tb <= "00001101"; wait until rising_edge(clk);
 		for i in 0 to BUFFER_DEPTH*10 loop wait until rising_edge(clk); end loop;
 	end process;
 

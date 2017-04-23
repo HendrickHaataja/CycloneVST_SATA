@@ -196,7 +196,7 @@ begin
     end process;
 
     transport_next_state_logic: process (current_state, status_from_link, link_rdy, data_from_link,link_fis_type, user_command,rst_n,pause, tx_index,
-                                         rx_index, tx_buffer_full, rx_buffer_full, tx_read_ptr, data_from_link_valid, read_error, write_error)
+                                         rx_index, tx_buffer_full, rx_buffer_full, tx_read_ptr, data_from_link_valid, read_error, write_error, link_error)
       begin
         case (current_state) is
         ----------------------------------------------- -----------------------------------------------
@@ -321,7 +321,7 @@ begin
             when dma_write_chk_activate =>
                 if (link_fis_type = DMA_ACTIVATE_FIS) then
                     next_state <= dma_write_data_fis;
-                elsif (link_error = '1' or link_fis_type = REG_DEVICE_TO_HOST) then
+                elsif (link_error = '1' or (data_from_link (7 downto 0) = REG_DEVICE_TO_HOST and (data_from_link(STATUS_ERR) = '1' or data_from_link(STATUS_DF) = '1'))) then
                     next_state <= report_error;
                 else
                     next_state <= dma_write_chk_activate;
@@ -387,7 +387,7 @@ begin
             when dma_read_data_fis  =>
                 if (data_from_link(7 downto 0)= DATA_FIS) then
                     next_state <= dma_read_data_frame;
-                elsif (link_fis_type = REG_DEVICE_TO_HOST or link_error = '1') then --this condition is possible if address is out of range, or there is a device fault or media error
+                elsif (link_error = '1' or (data_from_link (7 downto 0) = REG_DEVICE_TO_HOST and (data_from_link(STATUS_ERR) = '1' or data_from_link(STATUS_DF) = '1'))) then --this condition is possible if address is out of range, or there is a device fault or media error
                     next_state <= report_error;
                 else
                     next_state <= dma_read_data_fis;
@@ -434,6 +434,8 @@ begin
             last_read_address <= (others => '1');
             error_address <= (others => '1');
             command_error <= '0';
+            write_error <= '0';
+            read_error <= '0';
         elsif (rising_edge(clk)) then
             if (pause = '0') then
                 case (current_state) is
@@ -461,6 +463,8 @@ begin
                         last_read_address <= (others => '1');
                         error_address <= (others => '1');
                         command_error <= '0';
+                        write_error <= '0';
+                        read_error <= '0';
                     when transport_init_start =>
                         rx_from_link_ready <= '1';
                         tx_fis_array(tx_index).fis_type <= REG_HOST_TO_DEVICE;
@@ -634,7 +638,7 @@ begin
                     when dma_read_data_fis  =>
                         tx_to_link_request <= '0';
                         rx_from_link_ready <= '1';
-                        if (data_from_link (7 downto 0) = REG_DEVICE_TO_HOST or link_error = '1') then
+                        if (link_error = '1' or (data_from_link (7 downto 0) = REG_DEVICE_TO_HOST and (data_from_link(STATUS_ERR) = '1' or data_from_link(STATUS_DF) = '1'))) then
                             error_address <= rx_fis_array(rx_index).lba_ext(7 downto 0) & rx_fis_array(rx_index).lba;
                             read_error <= '1';
                         end if;
